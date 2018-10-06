@@ -77,8 +77,10 @@ func (h *HugoSites) Build(config BuildCfg, events ...fsnotify.Event) error {
 		h.Log.FEEDBACK.Println()
 	}
 
-	if n := h.LogErrCounter.Count(); n > 0 {
-		return fmt.Errorf("logged %d error(s)", n)
+	if h.LogErrCounter != nil {
+		if n := h.LogErrCounter.Count(); n > 0 {
+			return fmt.Errorf("logged %d error(s)", n)
+		}
 	}
 
 	return nil
