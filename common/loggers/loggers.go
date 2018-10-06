@@ -32,6 +32,6 @@ func NewWarningLogger() *jww.Notepad {
 }
 
 // NewErrorLogger is a convenience function to create an error logger.
-func NewErrorLogger() *jww.Notepad {
-	return jww.NewNotepad(jww.LevelError, jww.LevelError, os.Stdout, ioutil.Discard, "", log.Ldate|log.Ltime)
+func NewErrorLogger(lis ...jww.LogListener) *jww.Notepad {
+	return jww.NewNotepad(jww.LevelError, jww.LevelError, os.Stdout, ioutil.Discard, "", log.Ldate|log.Ltime, lis...)
 }

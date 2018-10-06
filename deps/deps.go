@@ -26,6 +26,7 @@ type Deps struct {
 
 	// The logger to use.
 	Log *jww.Notepad `json:"-"`
+	LogErrCounter *jww.Counter `json:"-"`
 
 	// Used to log errors that may repeat itself many times.
 	DistinctErrorLog *helpers.DistinctLogger
@@ -150,8 +151,10 @@ func New(cfg DepsCfg) (*Deps, error) {
 		panic("Must have a Language")
 	}
 
+	var logErrCounter *jww.Counter
 	if logger == nil {
-		logger = loggers.NewErrorLogger()
+		logger = loggers.NewErrorLogger(jww.LogCounter(logErrCounter, jww.LevelError))
+		logErrCounter = new(jww.Counter)
 	}
 
 	if fs == nil {
@@ -187,6 +190,7 @@ func New(cfg DepsCfg) (*Deps, error) {
 	d := &Deps{
 		Fs:                  fs,
 		Log:                 logger,
+		LogErrCounter:       logErrCounter,
 		DistinctErrorLog:    distinctErrorLogger,
 		templateProvider:    cfg.TemplateProvider,
 		translationProvider: cfg.TranslationProvider,

@@ -29,7 +29,6 @@ import (
 	"github.com/gohugoio/hugo/i18n"
 	"github.com/gohugoio/hugo/tpl"
 	"github.com/gohugoio/hugo/tpl/tplimpl"
-	jww "github.com/spf13/jwalterweatherman"
 )
 
 // HugoSites represents the sites to build. Each site represents a language.
@@ -66,10 +65,10 @@ func (h *HugoSites) LanguageSet() map[string]bool {
 }
 
 func (h *HugoSites) NumLogErrors() int {
-	if h == nil {
+	if h == nil || h.LogErrCounter == nil {
 		return 0
 	}
-	return int(h.Log.LogCountForLevelsGreaterThanorEqualTo(jww.LevelError))
+	return int(h.LogErrCounter.Count())
 }
 
 func (h *HugoSites) PrintProcessingStats(w io.Writer) {
@@ -301,7 +300,9 @@ func (h *HugoSites) reset() {
 
 // resetLogs resets the log counters etc. Used to do a new build on the same sites.
 func (h *HugoSites) resetLogs() {
-	h.Log.ResetLogCounters()
+	if h.LogErrCounter != nil {
+		h.LogErrCounter.Reset()
+	}
 	for _, s := range h.Sites {
 		s.Deps.DistinctErrorLog = helpers.NewDistinctLogger(h.Log.ERROR)
 	}

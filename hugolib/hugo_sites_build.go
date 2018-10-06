@@ -19,8 +19,6 @@ import (
 
 	"errors"
 
-	jww "github.com/spf13/jwalterweatherman"
-
 	"github.com/fsnotify/fsnotify"
 	"github.com/gohugoio/hugo/helpers"
 )
@@ -79,9 +77,8 @@ func (h *HugoSites) Build(config BuildCfg, events ...fsnotify.Event) error {
 		h.Log.FEEDBACK.Println()
 	}
 
-	errorCount := h.Log.LogCountForLevel(jww.LevelError)
-	if errorCount > 0 {
-		return fmt.Errorf("logged %d error(s)", errorCount)
+	if n := h.LogErrCounter.Count(); n > 0 {
+		return fmt.Errorf("logged %d error(s)", n)
 	}
 
 	return nil
