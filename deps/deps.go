@@ -25,7 +25,7 @@ import (
 type Deps struct {
 
 	// The logger to use.
-	Log *jww.Notepad `json:"-"`
+	Log           *jww.Notepad `json:"-"`
 	LogErrCounter *jww.Counter `json:"-"`
 
 	// Used to log errors that may repeat itself many times.
