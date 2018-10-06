@@ -75,6 +75,9 @@ func Execute(args []string) Response {
 	cmd := hugoCmd.getCommand()
 	cmd.SetArgs(args)
 
+	logErrCounter := new(jww.Counter)
+	jww.SetLogListeners(jww.LogCounter(logErrCounter, jww.LevelError))
+
 	c, err := cmd.ExecuteC()
 
 	var resp Response
@@ -85,16 +88,14 @@ func Execute(args []string) Response {
 	}
 
 	if err == nil {
-		errCount := int(jww.LogCountForLevelsGreaterThanorEqualTo(jww.LevelError))
+		errCount := logErrCounter.Count()
 		if errCount > 0 {
 			err = fmt.Errorf("logged %d errors", errCount)
 		} else if resp.Result != nil {
-			errCount = resp.Result.NumLogErrors()
-			if errCount > 0 {
-				err = fmt.Errorf("logged %d errors", errCount)
+			if n := resp.Result.NumLogErrors(); n > 0 {
+				err = fmt.Errorf("logged %d errors", n)
 			}
 		}
-
 	}
 
 	resp.Err = err
